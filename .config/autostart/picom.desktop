@@ -1,0 +1,4 @@
+[Desktop Entry]
+Name=picom
+Exec=picom --daemon
+Type=Application
