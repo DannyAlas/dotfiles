@@ -45,8 +45,8 @@ style = "bold"
 [keyboard]
 bindings = [
   { key = "Return", mods = "Control|Shift", action = "CreateNewWindow" },
-  { key = "Return", mods = "Control", chars = "\\x1b[127;5u" },
-  ]
+  {key= "Back", mods= "Control", chars= "\u001b[127;5u"}, # allow C-BS to delete word in nvim
+]
 
 [env]
 TERM = "xterm-256color"
