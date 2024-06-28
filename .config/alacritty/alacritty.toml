@@ -45,7 +45,7 @@ style = "bold"
 [keyboard]
 bindings = [
   { key = "Return", mods = "Control|Shift", action = "CreateNewWindow" },
-  { key = "Return", mods = "Control", chars = "\\x17" },
+  { key = "Return", mods = "Control", chars = "\\x1b[127;5u" },
   ]
 
 [env]
