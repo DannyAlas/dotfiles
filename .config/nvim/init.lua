@@ -236,6 +236,7 @@ vim.lsp.handlers['textDocument/publishDiagnostics'] = vim.lsp.with(vim.lsp.diagn
   underline = true,
   update_in_insert = true, -- I personally don't want them in insert mode
 })
+vim.lsp.set_log_level 'debug'
 
 -- [[ Configure and install plugins ]]
 --
@@ -588,8 +589,29 @@ require('lazy').setup({
       --  - capabilities (table): Override fields in capabilities. Can be used to disable certain LSP features.
       --  - settings (table): Override the default settings passed when initializing the server.
       --        For example, to see the options for `lua_ls`, you could go to: https://luals.github.io/wiki/settings/
+
+      -- @brief Returns the number of processing cores for clangd to use, default is 4
+      local nproc = function()
+        local procn = tonumber(vim.fn.system 'nproc')
+        if procn then
+          return procn
+        end
+        return 4
+      end
       local servers = {
         clangd = {
+          cmd = {
+            'clangd',
+            '--background-index',
+            '--header-insertion=iwyu', -- never
+            '--clang-tidy',
+            '-j=' .. nproc(),
+            '--header-insertion-decorators',
+            '--all-scopes-completion',
+            '--pch-storage=memory',
+            '--offset-encoding=utf-16',
+            '--query-driver=/**/bin/g*,/usr/bin/arm-none-eabi-gcc',
+          },
           capabilities = {
             textDocument = {
               completion = {
