@@ -236,7 +236,6 @@ vim.lsp.handlers['textDocument/publishDiagnostics'] = vim.lsp.with(vim.lsp.diagn
   underline = true,
   update_in_insert = true, -- I personally don't want them in insert mode
 })
-vim.lsp.set_log_level 'debug'
 
 -- [[ Configure and install plugins ]]
 --
