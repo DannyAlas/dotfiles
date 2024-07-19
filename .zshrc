@@ -51,10 +51,14 @@ zinit cdreplay -q
 
 # Keybindings
 bindkey -e
-bindkey '^p' history-search-backward
-bindkey '^n' history-search-forward
-bindkey '^[w' kill-region
-bindkey '^H' backward-kill-word
+bindkey '^p'      history-search-backward
+bindkey '^n'      history-search-forward
+bindkey '^[w'     kill-region
+bindkey "^[[1;5D" backward-word
+bindkey "^[[1;5C" forward-word
+bindkey ";5u"     backward-kill-word
+bindkey "5~"      kill-word
+bindkey "3~"      kill-word
 
 # History
 HISTSIZE=5000
@@ -79,6 +83,7 @@ zstyle ':fzf-tab:complete:__zoxide_z:*' fzf-preview 'ls --color $realpath'
 # Aliases
 alias ls='ls --color'
 alias vim='nvim'
+alias vi='nvim'
 alias c='clear'
 
 # Shell integrations

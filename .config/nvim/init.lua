@@ -199,8 +199,21 @@ vim.keymap.set('n', '<C-j>', '<C-w><C-j>', { desc = 'Move focus to the lower win
 vim.keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper window' })
 
 -- ctrl tab <Cmd>BufferPrevious<CR>
-vim.keymap.set('n', '<C-TAB>', '<Cmd>BufferNext<CR>', { desc = 'Move to next buffer' })
-vim.keymap.set('n', '<C-S-TAB>', '<Cmd>BufferPrevious<CR>', { desc = 'Move to previous buffer' })
+vim.keymap.set('n', '<A-,>', '<Cmd>BufferPrevious<CR>', { desc = 'Move to previous buffer' })
+vim.keymap.set('n', '<A-.>', '<Cmd>BufferNext<CR>', { desc = 'Move to next buffer' })
+vim.keymap.set('n', '<A-<>', '<Cmd>BufferMovePrevious<CR>', { desc = 'Move buffer to the left' })
+vim.keymap.set('n', '<A->>', '<Cmd>BufferMoveNext<CR>', { desc = 'Move buffer to the right' })
+vim.keymap.set('n', '<A-1>', '<Cmd>BufferGoto 1<CR>', { desc = 'Move to buffer 1' })
+vim.keymap.set('n', '<A-2>', '<Cmd>BufferGoto 2<CR>', { desc = 'Move to buffer 2' })
+vim.keymap.set('n', '<A-3>', '<Cmd>BufferGoto 3<CR>', { desc = 'Move to buffer 3' })
+vim.keymap.set('n', '<A-4>', '<Cmd>BufferGoto 4<CR>', { desc = 'Move to buffer 4' })
+vim.keymap.set('n', '<A-5>', '<Cmd>BufferGoto 5<CR>', { desc = 'Move to buffer 5' })
+vim.keymap.set('n', '<A-6>', '<Cmd>BufferGoto 6<CR>', { desc = 'Move to buffer 6' })
+vim.keymap.set('n', '<A-7>', '<Cmd>BufferGoto 7<CR>', { desc = 'Move to buffer 7' })
+vim.keymap.set('n', '<A-8>', '<Cmd>BufferGoto 8<CR>', { desc = 'Move to buffer 8' })
+vim.keymap.set('n', '<A-9>', '<Cmd>BufferGoto 9<CR>', { desc = 'Move to buffer 9' })
+vim.keymap.set('n', '<A-0>', '<Cmd>BufferLast<CR>', { desc = 'Move to last buffer' })
+vim.keymap.set('n', '<A-p>', '<Cmd>BufferPin<CR>', { desc = 'Pin buffer' })
 vim.keymap.set('n', '<leader>Q', '<Cmd>BufferClose<CR>', { desc = 'Close buffer' })
 -- [[ Basic Autocommands ]]
 --  See `:help lua-guide-autocommands`
