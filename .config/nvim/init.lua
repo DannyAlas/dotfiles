@@ -214,7 +214,7 @@ vim.keymap.set('n', '<A-8>', '<Cmd>BufferGoto 8<CR>', { desc = 'Move to buffer 8
 vim.keymap.set('n', '<A-9>', '<Cmd>BufferGoto 9<CR>', { desc = 'Move to buffer 9' })
 vim.keymap.set('n', '<A-0>', '<Cmd>BufferLast<CR>', { desc = 'Move to last buffer' })
 vim.keymap.set('n', '<A-p>', '<Cmd>BufferPin<CR>', { desc = 'Pin buffer' })
-vim.keymap.set('n', '<leader>Q', '<Cmd>BufferClose<CR>', { desc = 'Close buffer' })
+vim.keymap.set('n', '<A-c>', '<Cmd>BufferClose<CR>', { desc = 'Close buffer' })
 -- [[ Basic Autocommands ]]
 --  See `:help lua-guide-autocommands`
 --  Ctrl + Backspace to delete the word before the cursor in insert mode
