@@ -120,5 +120,6 @@ export PATH=$PATH:/usr/local/go/bin
 export PATH=$PATH:$HOME/go/bin
 export GOPATH=$HOME/go
 . "$HOME/.cargo/env"
+export PATH=$PATH:/usr/local/magick
 
 [ -f ~/.fzf.bash ] && source ~/.fzf.bash
