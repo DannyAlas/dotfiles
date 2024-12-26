@@ -104,10 +104,10 @@ vim.g.have_nerd_font = false
 -- Make line numbers default
 vim.opt.number = true
 
-vim.opt.tabstop = 2
-vim.opt.shiftwidth = 2
+vim.opt.tabstop = 4
+vim.opt.shiftwidth = 4
 vim.opt.expandtab = true
-vim.bo.softtabstop = 2
+vim.bo.softtabstop = 4
 -- You can also add relative line numbers, to help with jumping.
 --  Experiment for yourself to see if you like it!
 vim.opt.relativenumber = true
@@ -162,6 +162,14 @@ vim.opt.cursorline = true
 -- Minimal number of screen lines to keep above and below the cursor.
 vim.opt.scrolloff = 10
 
+-- Diagnostic configs
+vim.o.updatetime = 250
+vim.api.nvim_create_autocmd({ 'CursorHold', 'CursorHoldI' }, {
+  group = vim.api.nvim_create_augroup('float_diagnostic', { clear = true }),
+  callback = function()
+    vim.diagnostic.open_float(nil, { focus = false })
+  end,
+})
 -- [[ Basic Keymaps ]]
 --  See `:help vim.keymap.set()`
 
@@ -214,7 +222,7 @@ vim.keymap.set('n', '<A-8>', '<Cmd>BufferGoto 8<CR>', { desc = 'Move to buffer 8
 vim.keymap.set('n', '<A-9>', '<Cmd>BufferGoto 9<CR>', { desc = 'Move to buffer 9' })
 vim.keymap.set('n', '<A-0>', '<Cmd>BufferLast<CR>', { desc = 'Move to last buffer' })
 vim.keymap.set('n', '<A-p>', '<Cmd>BufferPin<CR>', { desc = 'Pin buffer' })
-vim.keymap.set('n', '<leader>Q', '<Cmd>BufferClose<CR>', { desc = 'Close buffer' })
+vim.keymap.set('n', '<A-c>', '<Cmd>BufferClose<CR>', { desc = 'Close buffer' })
 -- [[ Basic Autocommands ]]
 --  See `:help lua-guide-autocommands`
 --  Ctrl + Backspace to delete the word before the cursor in insert mode
@@ -244,7 +252,7 @@ vim.opt.rtp:prepend(lazypath)
 -- added to fix clangd diagnostics dissapearing
 -- See: https://www.reddit.com/r/neovim/comments/127pv2v/clangd_diagnostics
 vim.lsp.handlers['textDocument/publishDiagnostics'] = vim.lsp.with(vim.lsp.diagnostic.on_publish_diagnostics, {
-  virtual_text = true,
+  virtual_text = false,
   signs = true,
   underline = true,
   update_in_insert = true, -- I personally don't want them in insert mode
@@ -461,32 +469,23 @@ require('lazy').setup({
       -- used for completion, annotations and signatures of Neovim apis
       { 'folke/neodev.nvim', opts = {} },
     },
-    config = function()
-      -- Brief aside: **What is LSP?**
-      --
-      -- LSP is an initialism you've probably heard, but might not understand what it is.
-      --
-      -- LSP stands for Language Server Protocol. It's a protocol that helps editors
-      -- and language tooling communicate in a standardized fashion.
-      --
-      -- In general, you have a "server" which is some tool built to understand a particular
-      -- language (such as `gopls`, `lua_ls`, `rust_analyzer`, etc.). These Language Servers
-      -- (sometimes called LSP servers, but that's kind of like ATM Machine) are standalone
-      -- processes that communicate with some "client" - in this case, Neovim!
-      --
-      -- LSP provides Neovim with features like:
-      --  - Go to definition
-      --  - Find references
-      --  - Autocompletion
-      --  - Symbol Search
-      --  - and more!
-      --
-      -- Thus, Language Servers are external tools that must be installed separately from
-      -- Neovim. This is where `mason` and related plugins come into play.
-      --
-      -- If you're wondering about lsp vs treesitter, you can check out the wonderfully
-      -- and elegantly composed help section, `:help lsp-vs-treesitter`
-
+    opts = function()
+      local ret = {
+        diagnostics = {
+          underline = true,
+          virtual_text = false,
+        },
+      }
+      return ret
+    end,
+    ---@param opts PluginLspOpts
+    config = function(_, opts)
+      opts.diagnostics = {
+        underline = true,
+        update_in_insert = false,
+        virtual_text = false,
+        severity_sort = true,
+      }
       --  This function gets run when an LSP attaches to a particular buffer.
       --    That is to say, every time a new file is opened that is associated with
       --    an lsp (for example, opening `main.rs` is associated with `rust_analyzer`) this
@@ -986,24 +985,58 @@ require('lazy').setup({
       -- …etc.
     },
   },
-
   {
     'kevinhwang91/nvim-ufo',
     dependencies = { 'kevinhwang91/promise-async' },
-    opts = {
-      filetypeexclude = { 'help', 'alpha', 'dashboard', 'neo-tree', 'Trouble', 'lazy', 'mason' },
-    },
-    config = function(_, opts)
-      vim.api.nvim_create_autocmd('filetype', {
-        group = vim.api.nvim_create_augroup('local_detach_ufo', { clear = true }),
-        pattern = opts.filetype_exclude,
-        callback = function()
-          require('ufo').detach()
+    event = 'BufRead',
+    keys = {
+      {
+        'zR',
+        function()
+          require('ufo').openAllFolds()
         end,
-      })
-      vim.opt.foldlevelstart = 99
-      require('ufo').setup(opts)
+      },
+      {
+        'zM',
+        function()
+          require('ufo').closeAllFolds()
+        end,
+      },
+      {
+        'zK',
+        function()
+          local winid = require('ufo').peekFoldedLinesUnderCursor()
+          if not winid then
+            vim.lsp.buf.hover()
+          end
+        end,
+      },
+    },
+    config = function()
+      vim.o.foldcolumn = '1'
+      vim.o.foldlevel = 99
+      vim.o.foldlevelstart = 99
+      vim.o.foldenable = true
+      require('ufo').setup {
+        close_fold_kinds = { 'imports' },
+      }
     end,
+  },
+  {
+    'linux-cultist/venv-selector.nvim',
+    dependencies = { 'neovim/nvim-lspconfig', 'nvim-telescope/telescope.nvim', 'mfussenegger/nvim-dap-python' },
+    opts = {
+      -- Your options go here
+      -- name = "venv",
+      -- auto_refresh = false
+    },
+    event = 'VeryLazy', -- Optional: needed only if you want to type `:VenvSelect` without a keymapping
+    keys = {
+      -- Keymap to open VenvSelector to pick a venv.
+      { '<leader>vs', '<cmd>VenvSelect<cr>' },
+      -- Keymap to retrieve the venv from a cache (the one previously used for the same project directory).
+      { '<leader>vc', '<cmd>VenvSelectCached<cr>' },
+    },
   },
   {
     'kkoomen/vim-doge',
